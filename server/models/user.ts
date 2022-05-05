@@ -1,16 +1,21 @@
-import mongoose from 'mongoose';
+import { Schema, model, models, PassportLocalSchema, PassportLocalDocument, PassportLocalModel } from 'mongoose';
+import passportLocalMongoose from 'passport-local-mongoose';
 
 const ModelName = "User";
 
-export interface IUser {
-  username: string;
+export interface IUser extends PassportLocalDocument {
+  details: string
 }
 
-export const UserSchema = new mongoose.Schema(
+export const UserSchema = new Schema<IUser>(
   {
-    username: String
+    details: String
   },
   { timestamps: true },
 );
 
-export default mongoose.models[ModelName] || mongoose.model(ModelName, UserSchema);
+UserSchema.plugin(passportLocalMongoose);
+
+const User = models[ModelName] as PassportLocalModel<IUser> || model<IUser>(ModelName, UserSchema as PassportLocalSchema);
+
+export default User;

@@ -2,9 +2,10 @@ import path from "path";
 
 import express from "express";
 import mongoose from 'mongoose';
-import passport from "passport";
 
-import User from './models/user';
+import AuthInit from "./auth";
+
+import AuthRouter from './routes/auth';
 
 import dotenv from "dotenv";
 dotenv.config({
@@ -14,13 +15,10 @@ dotenv.config({
 const app = express();
 
 mongoose.connect(process.env.MONGO_URI as any).then(async () => {
-  const thing = new User({
-    username: "test"
-  })
-  await thing.save();
-  app.get("/help", (req, res) => {
-    res.send("Hello World!");
-  });
+  console.log("Connected to MongoDB");
+  AuthInit();
+
+  app.use("/auth", AuthRouter);
 });
 
 module.exports = app;
